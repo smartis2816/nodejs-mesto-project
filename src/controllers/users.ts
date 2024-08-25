@@ -14,7 +14,7 @@ export const getUserById = (req: Request, res: Response) => {
   .then((user) => res.send({ data: user }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -27,7 +27,7 @@ export const createUser = (req: Request, res: Response) => {
   .then(user => res.status(201).send({ data: user }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -43,7 +43,7 @@ export const updateUser = (req: Request, res: Response) => {
   .then((user) => res.send({ data: user }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -59,7 +59,7 @@ export const updateUserAvatar = (req: Request, res: Response) => {
   .then((user) => res.send({ data: user }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }

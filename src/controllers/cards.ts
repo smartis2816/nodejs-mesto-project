@@ -15,7 +15,7 @@ export const createCard = (req: Request, res: Response) => {
   .then(card => res.status(201).send({ data: card }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -28,7 +28,7 @@ export const deleteCard = (req: Request, res: Response) => {
   .then((card) => res.send({ data: card }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -41,7 +41,7 @@ export const likeCard = (req: Request, res: Response) => {
   .then((card) => res.send({ data: card }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
@@ -54,7 +54,7 @@ export const dislikeCard = (req: Request, res: Response) => {
   .then((card) => res.send({ data: card }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
-      res.status(400);
+      res.status(400).send({ message: 'Произошла ошибка валидации'});
     } else {
       res.status(500).send({ message: 'Произошла ошибка' })
     }
