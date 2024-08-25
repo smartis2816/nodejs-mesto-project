@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import usersRouter from './routes/users';
 import cardsRouter from './routes/cards';
+import helmet from 'helmet';
 
 export interface AuthUser {
   user: {
@@ -16,6 +17,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 mongoose.connect(DB_URL);
 
+app.use(helmet());
 app.use((req: Request, res: Response<unknown, AuthUser>, next: NextFunction) => {
   res.locals.user = {
     _id: '66c98c941a1c38e07af44452',
@@ -26,5 +28,10 @@ app.use((req: Request, res: Response<unknown, AuthUser>, next: NextFunction) => 
 
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
+app.use('*', (req, res) =>
+  res.send(
+    { message: 'Запрашиваемый ресурс не найден' }
+  )
+);
 
 app.listen(PORT);
