@@ -2,16 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import User from '../models/user';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import ServerError from 'errors/server-err';
-import ValidationError from 'errors/validation-err';
-import NoAuthorizationError from 'errors/no-authorization-err';
-import AlreadyExistsError from 'errors/already-exists';
+import ValidationError from '../errors/validation-err';
+import NoAuthorizationError from '../errors/no-authorization-err';
+import AlreadyExistsError from '../errors/already-exists';
 
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   return User.find({})
   .then((users) => res.send({ data: users }))
-  .catch(() => next(new ServerError('Произошла ошибка на сервере')));
+  .catch(next);
 }
 
 export const getUserById = (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +21,7 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 }
@@ -38,7 +37,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     } if (err.code === 11000) {
       return next(new AlreadyExistsError('Пользователь с таким email уже существует'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 }
@@ -54,7 +53,7 @@ export const updateUser = (req: Request, res: Response, next: NextFunction) => {
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 }
@@ -70,7 +69,7 @@ export const updateUserAvatar = (req: Request, res: Response, next: NextFunction
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 }
@@ -101,7 +100,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     }).end();
     return res.send({ token });
   })
-  .catch(() => next(new ServerError('Произошла ошибка на сервере')));
+  .catch(next);
 }
 
 export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -112,7 +111,7 @@ export const getCurrentUser = async (req: Request, res: Response, next: NextFunc
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 };

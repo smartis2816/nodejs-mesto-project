@@ -1,14 +1,13 @@
 import e, { Request, Response, NextFunction } from 'express';
 import Card from '../models/card';
-import ValidationError from 'errors/validation-err';
-import ServerError from 'errors/server-err';
-import NoAccessError from 'errors/no-access-err';
+import ValidationError from '../errors/validation-err';
+import NoAccessError from '../errors/no-access-err';
 
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   return Card.find({})
   .then(cards => res.send({ data: cards }))
-  .catch(() => next(new ServerError('Произошла ошибка на сервере')));
+  .catch(next);
 }
 
 export const createCard = (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +19,7 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
     } else {
-      return next(new ServerError('Произошла ошибка на сервере'));
+      return next(err);
     }
   });
 };
@@ -32,12 +31,14 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
     if (card?.owner.toString() !== res.locals.user._id) {
       return next(new NoAccessError('Нельзя удалить чужую карточку'));
     }
-    res.send({ data: card })})
+    card?.deleteOne();
+    return res.send({ data: card })
+  })
     .catch((err) => {
       if (err.name == 'ValidationError') {
         return next(new ValidationError('Произошла ошибка валидации'));
       } else {
-        return next(new ServerError('Произошла ошибка на сервере'));
+        return next(err);
       }
     });
   }
@@ -50,7 +51,7 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       if (err.name == 'ValidationError') {
         return next(new ValidationError('Произошла ошибка валидации'));
       } else {
-        return next(new ServerError('Произошла ошибка на сервере'));
+        return next(err);
       }
     });
   }
@@ -63,7 +64,7 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       if (err.name == 'ValidationError') {
         return next(new ValidationError('Произошла ошибка валидации'));
       } else {
-        return next(new ServerError('Произошла ошибка на сервере'));
+        return next(err);
       }
     });
   }

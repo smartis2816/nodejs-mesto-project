@@ -6,9 +6,10 @@ import cardsRouter from './routes/cards';
 import helmet from 'helmet';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
-import winston from 'winston';
 import { requestLogger, errorLogger } from './middlewares/logger';
-import NotFoundError from 'errors/not-found-err';
+import NotFoundError from './errors/not-found-err';
+import errorHandler from './errors/error-handler';
+import { userValidation, loginValidation } from './middlewares/validation';
 
 export interface AuthUser {
   user: {
@@ -28,13 +29,14 @@ app.use(requestLogger);
 
 app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', loginValidation, login);
+app.post('/signup', userValidation, createUser);
 
 app.use(errorLogger);
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
   return next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
 
+app.use(errorHandler);
 
 app.listen(PORT);

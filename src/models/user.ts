@@ -9,8 +9,6 @@ interface IUser {
   password: string;
 }
 
-const urlExp = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
-
 const UserSchema = new mongoose.Schema<IUser>({
   name: {
     type: String,
@@ -27,7 +25,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   avatar: {
     type: String,
     validate: {
-      validator: (value: any) => urlExp.test(value),
+      validator: (value: any) => validator.isURL(value),
       message: 'Некорректный URL',
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
