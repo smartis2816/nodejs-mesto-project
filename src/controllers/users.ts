@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import ValidationError from '../errors/validation-err';
 import NoAuthorizationError from '../errors/no-authorization-err';
 import AlreadyExistsError from '../errors/already-exists';
+import { jwtKey } from '../config/config';
 
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
@@ -30,7 +31,10 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar, email, password } = req.body;
   return bcrypt.hash(password, 10)
   .then (hash => User.create({ name, about, avatar, email, password: hash }))
-  .then(user => res.status(201).send({ data: user }))
+  .then(user => {
+    const {password, ...userWithoutPassword} = user.toObject();
+    res.status(201).send({ data: userWithoutPassword })
+  })
   .catch((err) => {
     if (err.name == 'ValidationError') {
       return next(new ValidationError('Произошла ошибка валидации'));
@@ -81,24 +85,22 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     if (!user) {
       return Promise.reject(new NoAuthorizationError('Неправильные почта или пароль'));
     }
-
-    return bcrypt.compare(password, user.password);
-  })
-  .then((matched) => {
-    if (!matched) {
-      return Promise.reject(new NoAuthorizationError('Неправильные почта или пароль'));
-    }
-
-    const token = jwt.sign(
-      { _id: res.locals.user._id },
-      'secret-key',
-      { expiresIn: '7d' }
-    );
-    res.cookie('jwt', token, {
-      maxAge: 3600000 * 24 * 7,
-      httpOnly: true
-    }).end();
-    return res.send({ token });
+    return bcrypt.compare(password, user.password)
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new NoAuthorizationError('Неправильные почта или пароль'));
+      }
+      const token = jwt.sign(
+        { _id: user._id },
+        jwtKey,
+        { expiresIn: '7d' }
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true
+      }).end();
+      return res.send({ token });
+    })
   })
   .catch(next);
 }

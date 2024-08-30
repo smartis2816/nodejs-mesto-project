@@ -5,8 +5,8 @@ import { avatarValidation, userIdValidation, userDefinitionValidation } from '..
 const router = Router();
 
 router.get('/', getUsers);
-router.get('/:userId', userIdValidation, getUserById);
 router.get('/me', getCurrentUser);
+router.get('/:userId', userIdValidation, getUserById);
 router.patch('/me', userDefinitionValidation, updateUser);
 router.patch('/me/avatar', avatarValidation, updateUserAvatar);
 

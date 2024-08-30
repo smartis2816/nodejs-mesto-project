@@ -23,6 +23,8 @@ const { PORT = 3000 } = process.env;
 const app = express();
 mongoose.connect(DB_URL);
 
+app.use(express.json());
+
 app.use(helmet());
 
 app.use(requestLogger);
@@ -32,10 +34,12 @@ app.use('/cards', auth, cardsRouter);
 app.post('/signin', loginValidation, login);
 app.post('/signup', userValidation, createUser);
 
-app.use(errorLogger);
+
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
   return next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
+
+app.use(errorLogger);
 
 app.use(errorHandler);
 
