@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { jwtKey } from '../config/config';
 
 const auth = (req: Request, res: Response, next: NextFunction) => {
-  const { authorization } = req.headers;
+  const authorization = req.cookies.jwt;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return next(new NoAuthorizationError('Необходима авторизация'));

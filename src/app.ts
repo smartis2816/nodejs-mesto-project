@@ -10,6 +10,8 @@ import { requestLogger, errorLogger } from './middlewares/logger';
 import NotFoundError from './errors/not-found-err';
 import errorHandler from './errors/error-handler';
 import { userValidation, loginValidation } from './middlewares/validation';
+import { errors } from 'celebrate';
+import cookieParser = require("cookie-parser");
 
 export interface AuthUser {
   user: {
@@ -23,6 +25,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 mongoose.connect(DB_URL);
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use(helmet());
@@ -40,7 +43,7 @@ app.use('*', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(errorLogger);
-
+app.use(errors())
 app.use(errorHandler);
 
 app.listen(PORT);

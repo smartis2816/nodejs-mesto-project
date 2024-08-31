@@ -15,8 +15,8 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const getUserById = (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  return User.findById(id)
+  const userId = req.params.id;
+  return User.findById(userId)
   .then((user) => res.send({ data: user }))
   .catch((err) => {
     if (err.name == 'ValidationError') {
@@ -98,7 +98,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true
-      }).end();
+      });
       return res.send({ token });
     })
   })
